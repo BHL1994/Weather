@@ -34,11 +34,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
         
     }
     
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-    }
-    
-    @objc func gestureTapped(_ gesture: UITapGestureRecognizer) {
+    override func viewWillAppear(_ animated: Bool) {
         var locationManager: CLLocationManager?
         
         locationManager = CLLocationManager()
@@ -55,26 +51,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         locationManager?.stopUpdatingLocation()
-        
-        let geocoder = CLGeocoder()
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        geocoder.reverseGeocodeLocation(location, completionHandler: {
-            placemarks, error -> Void in
-            
-            if error != nil {
-                print("Error geocoding lcoation.")
-                return
-            }
-            
-            guard let placemark = placemarks?.first else{
-                return
-            }
-            
-            if let city = placemark.subLocality, let state = placemark.administrativeArea {
-                self.locationLabel.text = "\(city), \(state)"
-                
-            }
-        })
         
         Task {
             do {
@@ -93,6 +69,36 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
                 print("Error fetching Weather Data")
             }
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+    }
+    
+    @objc func gestureTapped(_ gesture: UITapGestureRecognizer) {
+//
+//
+//        let geocoder = CLGeocoder()
+//        let location = CLLocation(latitude: latitude, longitude: longitude)
+//        geocoder.reverseGeocodeLocation(location, completionHandler: {
+//            placemarks, error -> Void in
+//
+//            if error != nil {
+//                print("Error geocoding lcoation.")
+//                return
+//            }
+//
+//            guard let placemark = placemarks?.first else{
+//                return
+//            }
+//
+//            if let city = placemark.subLocality, let state = placemark.administrativeArea {
+//                self.locationLabel.text = "\(city), \(state)"
+//
+//            }
+//        })
+//
+        
 
         
     }
