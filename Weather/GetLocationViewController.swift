@@ -14,7 +14,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
     var hourlyForecastData: HourlyForecast?
     
     let openWeatherController = OpenWeatherController()
-
     
     @IBOutlet var locationLabel: UILabel!
     @IBOutlet var locationSymbol: UIImageView!
@@ -23,7 +22,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .black
 
         let locationGesture = UITapGestureRecognizer(target: self, action: #selector(gestureTapped(_:)))
         locationGesture.numberOfTapsRequired = 1
@@ -99,7 +98,9 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
 //        })
 //
         
-
+    }
+    
+    func updateUI() {
         
     }
 
