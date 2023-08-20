@@ -24,12 +24,12 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         view.backgroundColor = .black
 
-        let locationGesture = UITapGestureRecognizer(target: self, action: #selector(gestureTapped(_:)))
-        locationGesture.numberOfTapsRequired = 1
-        locationGesture.numberOfTouchesRequired = 1
+//        let locationGesture = UITapGestureRecognizer(target: self, action: #selector(gestureTapped(_:)))
+//        locationGesture.numberOfTapsRequired = 1
+//        locationGesture.numberOfTouchesRequired = 1
         
-        locationSymbol.addGestureRecognizer(locationGesture)
-        locationSymbol.isUserInteractionEnabled = true
+        //locationSymbol.addGestureRecognizer(locationGesture)
+        //locationSymbol.isUserInteractionEnabled = true
         
     }
     
