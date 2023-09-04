@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class WeatherDetailViewController: UIViewController {
     
@@ -13,41 +14,41 @@ class WeatherDetailViewController: UIViewController {
     var hourlyForecastData: HourlyForecast?
     let openWeatherController = OpenWeatherController()
     
+    var latitude = 0.0
+    var longitude = 0.0
+
+    @IBOutlet var locationLabel: UILabel!
     @IBOutlet var temperatureLabel: UILabel!
-    @IBOutlet var locationNameLabel: UILabel!
-    @IBOutlet var weatherDetailLabel: UILabel!
+    @IBOutlet var temperatureDescriptionLabel: UILabel!
     @IBOutlet var temperatureHighLabel: UILabel!
     @IBOutlet var temperatureLowLabel: UILabel!
-    
-    
+   
     @IBOutlet var hourLabels: [UILabel]!
-    @IBOutlet var temperatureLabels: [UILabel]!
-    
+    @IBOutlet var hourlyTemperatureLabels: [UILabel]!
     @IBOutlet var weatherIcons: [UIImageView]!
     
     override func viewDidLoad() {
-        super.viewDidLoad()        
+        super.viewDidLoad()
+        print(hourlyForecastData)
         updateUI()
+  
     }
     
+
     func updateUI() {
         if let temperature = currentWeatherData?.main.temp {
-            temperatureLabel.text = String(format: "%.0f", temperature)
+            temperatureLabel.text = String(format: "%.0f", temperature) + "°"
         }
-        locationNameLabel.text = currentWeatherData?.name
-        weatherDetailLabel.text = currentWeatherData?.weather[0].description
-        
+        locationLabel.text = currentWeatherData?.name
+        temperatureDescriptionLabel.text = currentWeatherData?.weather[0].description
+
         if let tempMax = currentWeatherData?.main.tempMax {
-            temperatureHighLabel.text = String(format: "%.0f", tempMax)
+            temperatureHighLabel.text = "H: " + String(format: "%.0f", tempMax) + "°"
         }
         if let tempMin = currentWeatherData?.main.tempMin {
-            temperatureLowLabel.text = String(format: "%.0f", tempMin)
+            temperatureLowLabel.text = "L: " + String(format: "%.0f", tempMin) + "°"
         }
-        
-        if let time = hourlyForecastData?.hour[0].dateTime {
-            hourLabels[0].text = String(time)
-        }
-        
+
         for index in hourLabels.indices {
             if let time = hourlyForecastData?.hour[index+1].dateTime {
                 hourLabels[index].text = convertTime(timestamp: time)
@@ -63,6 +64,12 @@ class WeatherDetailViewController: UIViewController {
                 }
             }
         }
+        
+        for index in hourlyTemperatureLabels.indices {
+            if let temperature = hourlyForecastData?.hour[index].temp {
+                hourlyTemperatureLabels[index].text = String(format: "%.0f", temperature) + "°"
+            }
+        }
     }
         
     func convertTime(timestamp: Int) -> String {
@@ -72,7 +79,7 @@ class WeatherDetailViewController: UIViewController {
         
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "GMT-0400")
-        dateFormatter.dateFormat = "H: mm a"
+        dateFormatter.dateFormat = "H a"
         let newDate = dateFormatter.string(from: date)
         
         return newDate

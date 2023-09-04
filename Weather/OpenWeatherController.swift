@@ -50,8 +50,7 @@ class OpenWeatherController {
               httpResponse.statusCode == 200 else {
             throw WeatherError.weatherNotFound
               }
-        
-        print(components.url!)
+        print(components.url)
         let jsonDecoder = JSONDecoder()
         let weatherInfo = try jsonDecoder.decode(HourlyForecast.self, from: data)
         return (weatherInfo)
@@ -62,9 +61,6 @@ class OpenWeatherController {
         let url = URL(string: "https://openweathermap.org/img/wn/\(icon)@2x.png")!
         
         let (data, response) = try await URLSession.shared.data(from: url)
-        
-        
-        print(url)
         
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
