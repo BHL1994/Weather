@@ -8,22 +8,42 @@
 import UIKit
 import CoreLocation
 
-class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
+class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
     
     var currentWeatherData: CurrentWeather?
     var hourlyForecastData: HourlyForecast?
     
     let openWeatherController = OpenWeatherController()
     
+    
+    @IBOutlet var authorizeLocationButton: UIButton!
+    @IBOutlet var allowAccessLabel: UILabel!
+    
+    @IBOutlet weak var tableView: UITableView!
+    
     var latitude: Double = 0
     var longitude: Double = 0
     
     var locationManager: CLLocationManager?
 
-            
+    let searchController = UISearchController(searchResultsController: nil)
+    
+    let names: [String] = ["Brien", "Joe", "Josh"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        navigationItem.searchController = searchController
+        navigationItem.title = "Location"
+        //authorizeLocationButton.isHidden = true
+        //allowAccessLabel.isHidden = true
+        tableViewSetup()
+    }
+    
+    func tableViewSetup() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.backgroundColor = .darkGray
+        //self.tableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: "Cell")
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -90,6 +110,42 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate {
         destinationVC.hourlyForecastData = hourlyForecastData
     }
     
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+
+           let view:UIView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.bounds.size.width, height: 10))
+           view.backgroundColor = .clear
+
+           return view
+       }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return names.count
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        cell.layer.cornerRadius = 20
+        //cell.layer.masksToBounds = true
+        
+        let name = names[indexPath.section]
+        var content = cell.defaultContentConfiguration()
+        content.text = name
+        cell.contentConfiguration = content
+        
+        return cell
+    }
 
 }
 
