@@ -12,8 +12,8 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     
     var currentWeatherData: CurrentWeather?
     var hourlyForecastData: HourlyForecast?
-    
     let openWeatherController = OpenWeatherController()
+    var weatherList: [CurrentWeather] = [CurrentWeather]()
     
     
     @IBOutlet var authorizeLocationButton: UIButton!
@@ -34,16 +34,25 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         super.viewDidLoad()
         navigationItem.searchController = searchController
         navigationItem.title = "Location"
-        //authorizeLocationButton.isHidden = true
-        //allowAccessLabel.isHidden = true
-        tableViewSetup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if weatherList.isEmpty {
+            tableView.isHidden = true
+        }
+        else {
+            tableView.isHidden = false
+            authorizeLocationButton.isHidden = true
+            allowAccessLabel.isHidden = true
+            tableViewSetup()
+        }
     }
     
     func tableViewSetup() {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .darkGray
-        //self.tableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: "Cell")
+        tableView.reloadData()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -74,6 +83,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
                 do {
                     let weatherInfo = try await openWeatherController.fetchCurrentWeather(latitude,longitude)
                     currentWeatherData = weatherInfo
+                    weatherList.append(currentWeatherData!)
                 } catch {
                     print("Error fetching Weather Data")
                 }
@@ -123,26 +133,19 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return names.count
+        return weatherList.count
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 10
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! WeatherTableViewCell
         cell.layer.cornerRadius = 20
-        //cell.layer.masksToBounds = true
         
-        let name = names[indexPath.section]
-        var content = cell.defaultContentConfiguration()
-        content.text = name
-        cell.contentConfiguration = content
+        let weather = weatherList[indexPath.section]
+        cell.weatherCellUpdate(weather: weather)
         
         return cell
     }
