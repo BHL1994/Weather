@@ -7,14 +7,19 @@
 
 import UIKit
 import CoreLocation
+import GooglePlaces
 
-class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
+class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UISearchControllerDelegate {
+    
+    //Google API Key - AIzaSyBZcF7t7gmHDuAFtah2gf18aWBNnmPh_Zk
+    //https://maps.googleapis.com/maps/api/place/autocomplete/json?input=909&East&29th&key=AIzaSyBZcF7t7gmHDuAFtah2gf18aWBNnmPh_Zk
+    
     
     var currentWeatherData: CurrentWeather?
     var hourlyForecastData: HourlyForecast?
     let openWeatherController = OpenWeatherController()
     var weatherList: [CurrentWeather] = [CurrentWeather]()
-    
+    var hourlyForecastList: [HourlyForecast] = [HourlyForecast]()
     
     @IBOutlet var authorizeLocationButton: UIButton!
     @IBOutlet var allowAccessLabel: UILabel!
@@ -25,15 +30,14 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     var longitude: Double = 0
     
     var locationManager: CLLocationManager?
-
-    let searchController = UISearchController(searchResultsController: nil)
     
-    let names: [String] = ["Brien", "Joe", "Josh"]
-    
+    var searchResultsTableViewController: SearchResultsTableViewController?
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.searchController = searchController
         navigationItem.title = "Location"
+        
+        searchResultsSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +50,17 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             allowAccessLabel.isHidden = true
             tableViewSetup()
         }
+    }
+    
+    func searchResultsSetup(){
+        searchResultsTableViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SearchResultsTableViewController") as! SearchResultsTableViewController
+        let searchController = UISearchController(searchResultsController: searchResultsTableViewController)
+        searchController.delegate = self
+        definesPresentationContext = true
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Enter a city, state or zip code"
+        navigationItem.searchController = searchController
+        searchController.searchResultsUpdater = searchResultsTableViewController
     }
     
     func tableViewSetup() {
@@ -82,8 +97,8 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             Task {
                 do {
                     let weatherInfo = try await openWeatherController.fetchCurrentWeather(latitude,longitude)
-                    currentWeatherData = weatherInfo
-                    weatherList.append(currentWeatherData!)
+                    //currentWeatherData = weatherInfo
+                    weatherList.append(weatherInfo)
                 } catch {
                     print("Error fetching Weather Data")
                 }
@@ -91,7 +106,8 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             Task {
                 do {
                     let weatherInfo = try await openWeatherController.fetchHourlyForecast(latitude, longitude)
-                    hourlyForecastData = weatherInfo
+                    //hourlyForecastData = weatherInfo
+                    hourlyForecastList.append(weatherInfo)
                 } catch {
                     print("Error fetching Weather Data")
                 }
@@ -116,8 +132,11 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! WeatherDetailViewController
-        destinationVC.currentWeatherData = currentWeatherData
-        destinationVC.hourlyForecastData = hourlyForecastData
+        //destinationVC.currentWeatherData = currentWeatherData
+        //destinationVC.hourlyForecastData = hourlyForecastData
+        destinationVC.currentWeatherData = weatherList[0]
+        destinationVC.hourlyForecastData = hourlyForecastList[0]
+        //print(tableView.indexPathForSelectedRow?.row)
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -140,6 +159,21 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         return 10
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "PermissionSegue", sender: nil)
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//            weatherList.remove(at: indexPath.section)
+//            tableView.deleteRows(at: [indexPath], with: .fade)
+//        }
+//    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! WeatherTableViewCell
         cell.layer.cornerRadius = 20
@@ -151,4 +185,3 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
 
 }
-
