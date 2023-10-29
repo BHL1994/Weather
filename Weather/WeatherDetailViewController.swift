@@ -10,9 +10,10 @@ import CoreLocation
 
 class WeatherDetailViewController: UIViewController {
     
-    var currentWeatherData: CurrentWeather?
-    var hourlyForecastData: HourlyForecast?
+    var currentWeatherData: CurrentWeather!
+    var hourlyForecastData: HourlyForecast!
     let openWeatherController = OpenWeatherController()
+    let getLocationViewController = GetLocationViewController()
     
     var latitude = 0.0
     var longitude = 0.0
@@ -30,7 +31,6 @@ class WeatherDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
-  
     }
     
 

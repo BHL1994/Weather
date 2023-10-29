@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kSt-7q-KfF">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22155" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="kSt-7q-KfF">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22131"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -137,6 +138,7 @@
                         <outlet property="authorizeLocationButton" destination="VOf-GL-wRd" id="fNZ-uH-zup"/>
                         <outlet property="tableView" destination="n9h-Qq-c7X" id="2zn-WB-k9A"/>
                         <segue destination="feA-Q3-txo" kind="presentation" identifier="PermissionSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="iZg-Rc-V3o"/>
+                        <segue destination="feA-Q3-txo" kind="presentation" identifier="CellSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="lxh-Ng-EuH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ggl-us-zZv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -402,6 +404,7 @@
                         </constraints>
                     </view>
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="QnQ-MV-xCx"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="locationLabel" destination="ugv-Q7-YO0" id="qO9-gv-1l7"/>
@@ -468,10 +471,13 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="SQe-1u-LEX"/>
+                    <connections>
+                        <segue destination="feA-Q3-txo" kind="presentation" identifier="SearchSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="jjZ-pz-exd"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qC9-jg-uxP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9073" y="6"/>
+            <point key="canvasLocation" x="7185" y="689"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="SYJ-hf-nuz">
@@ -491,7 +497,28 @@
             </objects>
             <point key="canvasLocation" x="6258.7786259541981" y="5.6338028169014089"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="1cL-Td-ycE">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="J7b-4C-5hQ" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ORz-IK-Uq3">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="xP0-9R-HRI" kind="relationship" relationship="rootViewController" id="7ci-mT-ayh"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nBa-b6-63W" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="6259" y="689"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="jjZ-pz-exd"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="line.3.horizontal" catalog="system" width="128" height="65"/>
         <systemColor name="systemBackgroundColor">
