@@ -36,7 +36,7 @@
                                     <action selector="buttonTapped:" destination="Ewy-Fx-sI8" eventType="touchUpInside" id="adl-rT-n73"/>
                                 </connections>
                             </button>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="n9h-Qq-c7X">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="n9h-Qq-c7X">
                                 <rect key="frame" x="10" y="103" width="373" height="749"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
@@ -121,7 +121,6 @@
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="n9h-Qq-c7X" secondAttribute="bottom" id="0VQ-f3-kKy"/>
-                            <constraint firstItem="n9h-Qq-c7X" firstAttribute="top" secondItem="Uie-Mt-Iap" secondAttribute="top" id="CaJ-2k-vaL"/>
                             <constraint firstItem="Uie-Mt-Iap" firstAttribute="trailing" secondItem="Zac-Rg-Bhv" secondAttribute="trailing" constant="10" id="GFl-OU-Lot"/>
                             <constraint firstItem="VOf-GL-wRd" firstAttribute="top" secondItem="Zac-Rg-Bhv" secondAttribute="bottom" constant="30" id="Nhc-pv-6ZV"/>
                             <constraint firstItem="Zac-Rg-Bhv" firstAttribute="leading" secondItem="Uie-Mt-Iap" secondAttribute="leading" constant="10" id="RSm-hX-agC"/>
@@ -525,10 +524,10 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemIndigoColor">
-            <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -8,9 +8,6 @@
 import UIKit
 import CoreLocation
 
-//add a new segue identifier to table view cell
-//embed navigation controller to SearchResultsController
-//if identifier is the authorization button you should do weatherList.last
 class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UISearchControllerDelegate {
 
     var currentWeatherData: CurrentWeather?
@@ -40,14 +37,22 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if GetLocationViewController.weatherList.isEmpty {
-            tableView.isHidden = true
+//        if GetLocationViewController.weatherList.isEmpty {
+//            tableView.isHidden = true
+//        }
+
+        if locationManager?.location == nil {
+            tableViewSetup()
+            tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
         }
         else {
             tableView.isHidden = false
             authorizeLocationButton.isHidden = true
             allowAccessLabel.isHidden = true
             tableViewSetup()
+            tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = false
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+            print("this")
         }
     }
     
