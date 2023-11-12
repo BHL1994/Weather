@@ -8,80 +8,74 @@
 import UIKit
 import CoreLocation
 
-class WeatherDetailViewController: UIViewController {
+class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
     
     var currentWeatherData: CurrentWeather!
     var hourlyForecastData: HourlyForecast!
-    let openWeatherController = OpenWeatherController()
-    let getLocationViewController = GetLocationViewController()
-    
-    var latitude = 0.0
-    var longitude = 0.0
 
-    @IBOutlet var locationLabel: UILabel!
-    @IBOutlet var temperatureLabel: UILabel!
-    @IBOutlet var temperatureDescriptionLabel: UILabel!
-    @IBOutlet var temperatureHighLabel: UILabel!
-    @IBOutlet var temperatureLowLabel: UILabel!
-   
-    @IBOutlet var hourLabels: [UILabel]!
-    @IBOutlet var hourlyTemperatureLabels: [UILabel]!
-    @IBOutlet var weatherIcons: [UIImageView]!
+    
+    @IBOutlet weak var locationLabel: UILabel!
+    @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var temperatureDescriptionLabel: UILabel!
+    @IBOutlet weak var temperatureHighLabel: UILabel!
+    @IBOutlet weak var temperatureLowLabel: UILabel!
+    
+    @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
         updateUI()
+    }
+
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return 1
+        }
+        return hourlyForecastData.daily.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "HourlyTableCell", for: indexPath) as! HourlyTableViewCell
+            cell.configureTableViewCell(with: hourlyForecastData)
+            return cell
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DailyTableCell", for: indexPath) as! DailyTableViewCell
+        cell.configureDailyCell(with: hourlyForecastData, indexPath.row)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0{
+            return "Hourly Forecast"
+        }
+        else if section == 1{
+            return "7-Day Forecast"
+        }
+        return nil
+    }
+
+    
+    func updateUI(){
+        temperatureLabel.text = String(format: "%.0f", currentWeatherData.main.temp) + "°"
+        locationLabel.text = currentWeatherData.name
+        temperatureDescriptionLabel.text = currentWeatherData.weather[0].description
+        temperatureHighLabel.text = "H: " + String(format: "%.0f", currentWeatherData.main.tempMax) + "°"
+        temperatureLowLabel.text = "L: " + String(format: "%.0f", currentWeatherData.main.tempMin) + "°"
     }
     
 
-    func updateUI() {
-        if let temperature = currentWeatherData?.main.temp {
-            temperatureLabel.text = String(format: "%.0f", temperature) + "°"
-        }
-        locationLabel.text = currentWeatherData?.name
-        temperatureDescriptionLabel.text = currentWeatherData?.weather[0].description
 
-        if let tempMax = currentWeatherData?.main.tempMax {
-            temperatureHighLabel.text = "H: " + String(format: "%.0f", tempMax) + "°"
-        }
-        if let tempMin = currentWeatherData?.main.tempMin {
-            temperatureLowLabel.text = "L: " + String(format: "%.0f", tempMin) + "°"
-        }
-
-        for index in hourLabels.indices {
-            if let time = hourlyForecastData?.hour[index+1].dateTime {
-                hourLabels[index].text = convertTime(timestamp: time)
-            }
-            Task {
-                do {
-                    if let image = hourlyForecastData?.hour[index+1].weather[0].icon {
-                        let weatherImage = try await openWeatherController.fetchImage(icon: image)
-                        weatherIcons[index].image = weatherImage
-                    }
-                } catch {
-                    print("Error fetching Image")
-                }
-            }
-        }
-        
-        for index in hourlyTemperatureLabels.indices {
-            if let temperature = hourlyForecastData?.hour[index].temp {
-                hourlyTemperatureLabels[index].text = String(format: "%.0f", temperature) + "°"
-            }
-        }
-    }
-        
-    func convertTime(timestamp: Int) -> String {
-        let time = Double(timestamp)
-        
-        let date = Date(timeIntervalSince1970: time)
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "GMT-0400")
-        dateFormatter.dateFormat = "H a"
-        let newDate = dateFormatter.string(from: date)
-        
-        return newDate
-    }
+    
+     
     
 }

@@ -18,6 +18,10 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     
     @IBOutlet var authorizeLocationButton: UIButton!
     @IBOutlet var allowAccessLabel: UILabel!
+
+    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var loadingView: UIView!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -32,15 +36,11 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Location"
-        
+        loadingView.isHidden = true
         searchResultsSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-//        if GetLocationViewController.weatherList.isEmpty {
-//            tableView.isHidden = true
-//        }
-
         if locationManager?.location == nil {
             tableViewSetup()
             tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
@@ -52,7 +52,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             tableViewSetup()
             tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = false
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-            print("this")
         }
     }
     
@@ -93,7 +92,9 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         case .restricted:
             break
         case .authorizedAlways, .authorizedWhenInUse, .authorized:
+            showActivityIndicator()
             locationManager?.requestLocation()
+            sleep(2)
             if let location = locationManager?.location?.coordinate.latitude {
                 latitude = location
             }
@@ -107,7 +108,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
                     let hourlyInfo = try await openWeatherController.fetchHourlyForecast(latitude, longitude)
                     GetLocationViewController.hourlyForecastList.append(hourlyInfo)
                     performSegue(withIdentifier: "PermissionSegue", sender: nil)
-                    print(GetLocationViewController.weatherList.count)
+                    locationManager?.stopUpdatingLocation()
                 } catch {
                     print("Error fetching Weather Data")
                 }
@@ -115,17 +116,22 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         default:
             break
         }
+        authorizeLocationButton.isEnabled = true
     }
     
     @IBAction func buttonTapped(_ sender: Any) {
+        authorizeLocationButton.isEnabled = false
         if locationManager == nil {
             locationManager = CLLocationManager()
             locationManager?.delegate = self
         }
             
-        if locationManager?.authorizationStatus == .authorizedAlways || locationManager?.authorizationStatus == .authorizedWhenInUse {
-            performSegue(withIdentifier: "PermissionSegue", sender: nil)
-        }
+//        if locationManager?.authorizationStatus == .authorizedAlways || locationManager?.authorizationStatus == .authorizedWhenInUse {
+//            performSegue(withIdentifier: "PermissionSegue", sender: nil)
+//        }
+//        else{
+//            //authorizeLocationButton.isEnabled = false
+//        }
     }
     
     @IBAction func unwindToGetLocationViewController(unwindSegue: UIStoryboardSegue) {
@@ -143,11 +149,10 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             destinationVC.currentWeatherData = GetLocationViewController.weatherList[section]
             destinationVC.hourlyForecastData = GetLocationViewController.hourlyForecastList[section]
         }
-        
+        hideActivityIndicator()
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-
            let view:UIView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: self.view.bounds.size.width, height: 10))
            view.backgroundColor = .clear
 
@@ -174,13 +179,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         return .delete
     }
     
-//    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            weatherList.remove(at: indexPath.section)
-//            tableView.deleteRows(at: [indexPath], with: .fade)
-//        }
-//    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! WeatherTableViewCell
         cell.layer.cornerRadius = 20
@@ -189,6 +187,17 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         cell.weatherCellUpdate(weather: weather)
         
         return cell
+    }
+    
+    func showActivityIndicator(){
+        activityIndicator.startAnimating()
+        loadingView.isHidden = false
+        loadingView.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
+    }
+    
+    func hideActivityIndicator(){
+        activityIndicator.stopAnimating()
+        loadingView.isHidden = true
     }
 
 }
