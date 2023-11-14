@@ -16,6 +16,9 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     static var weatherList: [CurrentWeather] = [CurrentWeather]()
     static var hourlyForecastList: [HourlyForecast] = [HourlyForecast]()
     
+    var userCurrentLocation: CurrentWeather?
+    var userHourlyLocation: HourlyForecast?
+    
     @IBOutlet var authorizeLocationButton: UIButton!
     @IBOutlet var allowAccessLabel: UILabel!
 
@@ -41,7 +44,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if locationManager?.location == nil {
+        if userCurrentLocation == nil && userHourlyLocation == nil {
             tableViewSetup()
             tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
         }
@@ -61,7 +64,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         searchController.searchBar.delegate = searchResultsTableViewController
         searchController.delegate = self
         searchController.definesPresentationContext = true
-        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "Enter a city, state or zip code"
         navigationItem.searchController = searchController
         searchController.searchResultsUpdater = searchResultsTableViewController
@@ -104,10 +107,17 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             Task {
                 do {
                     let weatherInfo = try await openWeatherController.fetchCurrentWeather(latitude,longitude)
-                    GetLocationViewController.weatherList.append(weatherInfo)
+                    userCurrentLocation = weatherInfo
+                    if let currentLocation = userCurrentLocation {
+                        GetLocationViewController.weatherList.insert(currentLocation, at: 0)
+                    }
                     let hourlyInfo = try await openWeatherController.fetchHourlyForecast(latitude, longitude)
-                    GetLocationViewController.hourlyForecastList.append(hourlyInfo)
+                    userHourlyLocation = hourlyInfo
+                    if let hourlyLocation = userHourlyLocation{
+                        GetLocationViewController.hourlyForecastList.insert(hourlyLocation, at: 0)
+                    }
                     performSegue(withIdentifier: "PermissionSegue", sender: nil)
+                    tableView.reloadData()
                     locationManager?.stopUpdatingLocation()
                 } catch {
                     print("Error fetching Weather Data")
@@ -201,3 +211,19 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
 
 }
+
+
+
+
+/*if locationManager?.location == nil {
+ tableViewSetup()
+ tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
+}
+else {
+ tableView.isHidden = false
+ authorizeLocationButton.isHidden = true
+ allowAccessLabel.isHidden = true
+ tableViewSetup()
+ tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = false
+ tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
+}*/

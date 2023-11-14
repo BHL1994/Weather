@@ -70,7 +70,6 @@ extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelega
   }
 
   func tableDataSource(_ tableDataSource: GMSAutocompleteTableDataSource, didFailAutocompleteWithError error: Error) {
-    // Handle the error.
     print("Error: \(error.localizedDescription)")
   }
 
