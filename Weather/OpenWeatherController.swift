@@ -42,10 +42,9 @@ class OpenWeatherController {
         
         var components = URLComponents(url: weatherForecastURL, resolvingAgainstBaseURL: true)!
         
-        components.queryItems = ["lat": String(latitude), "lon": String(longitude), "APPID":"245360e32e91a426865d3ab8daab5bf3", "units":"imperial", "exclude": "current,minutely,alerts"].map { URLQueryItem(name: $0.key, value: $0.value)}
+        components.queryItems = ["lat": String(latitude), "lon": String(longitude), "APPID":"245360e32e91a426865d3ab8daab5bf3", "units":"imperial", "exclude": "minutely,alerts"].map { URLQueryItem(name: $0.key, value: $0.value)}
         
         let (data, response) = try await URLSession.shared.data(from: components.url!)
-        print(components.url)
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
             throw WeatherError.weatherNotFound

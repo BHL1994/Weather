@@ -16,6 +16,8 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     static var weatherList: [CurrentWeather] = [CurrentWeather]()
     static var hourlyForecastList: [HourlyForecast] = [HourlyForecast]()
     
+    
+    
     var userCurrentLocation: CurrentWeather?
     var userHourlyLocation: HourlyForecast?
     
@@ -117,7 +119,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
                         GetLocationViewController.hourlyForecastList.insert(hourlyLocation, at: 0)
                     }
                     performSegue(withIdentifier: "PermissionSegue", sender: nil)
-                    tableView.reloadData()
                     locationManager?.stopUpdatingLocation()
                 } catch {
                     print("Error fetching Weather Data")
@@ -135,13 +136,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             locationManager = CLLocationManager()
             locationManager?.delegate = self
         }
-            
-//        if locationManager?.authorizationStatus == .authorizedAlways || locationManager?.authorizationStatus == .authorizedWhenInUse {
-//            performSegue(withIdentifier: "PermissionSegue", sender: nil)
-//        }
-//        else{
-//            //authorizeLocationButton.isEnabled = false
-//        }
     }
     
     @IBAction func unwindToGetLocationViewController(unwindSegue: UIStoryboardSegue) {
@@ -190,7 +184,17 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! WeatherTableViewCell
+        if userCurrentLocation != nil && userHourlyLocation != nil && indexPath.section == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as! WeatherTableViewCell
+            cell.layer.cornerRadius = 20
+            
+            let weather = GetLocationViewController.weatherList[indexPath.section]
+            cell.weatherCellUpdate(weather: weather)
+            
+            return cell
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell", for: indexPath) as! WeatherTableViewCell
         cell.layer.cornerRadius = 20
         
         let weather = GetLocationViewController.weatherList[indexPath.section]
@@ -211,19 +215,3 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
 
 }
-
-
-
-
-/*if locationManager?.location == nil {
- tableViewSetup()
- tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
-}
-else {
- tableView.isHidden = false
- authorizeLocationButton.isHidden = true
- allowAccessLabel.isHidden = true
- tableViewSetup()
- tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = false
- tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-}*/

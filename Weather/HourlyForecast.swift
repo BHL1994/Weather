@@ -13,6 +13,7 @@ struct HourlyForecast: Codable {
     var hour: [Hourly]
     var daily: [Daily]
     var timezoneOffset: Int
+    var current: Current
     
     enum CodingKeys: String, CodingKey {
         case latitude = "lat"
@@ -20,6 +21,7 @@ struct HourlyForecast: Codable {
         case hour = "hourly"
         case daily
         case timezoneOffset = "timezone_offset"
+        case current
     }
 }
 
@@ -44,6 +46,42 @@ struct Daily: Codable {
         case dateTime = "dt"
         case temp
         case dailyWeather = "weather"
+    }
+}
+
+struct Current: Codable {
+    var dateTime: Int
+    var sunrise: Int
+    var sunset: Int
+    var temp: Double
+    var feelsLike: Double
+    var humidity: Int
+    var weather: [CurrWeather]
+    
+    enum CodingKeys: String, CodingKey {
+        case dateTime = "dt"
+        case sunrise
+        case sunset
+        case temp
+        case feelsLike = "feels_like"
+        case humidity
+        case weather
+    }
+}
+
+
+//******************
+struct CurrWeather: Codable {
+    var id: Int
+    var main: String
+    var description: String
+    var icon: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case main
+        case description
+        case icon
     }
 }
 
