@@ -9,11 +9,8 @@ import UIKit
 import CoreLocation
 
 class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
-    
-    var currentWeatherData: CurrentWeather!
-    var hourlyForecastData: HourlyForecast!
-
+        
+    var forecastData: Forecast!
     
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -30,7 +27,6 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         updateUI()
     }
 
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -39,18 +35,18 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         if section == 0 {
             return 1
         }
-        return hourlyForecastData.daily.count
+        return forecastData.daily.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HourlyTableCell", for: indexPath) as! HourlyTableViewCell
-            cell.configureTableViewCell(with: hourlyForecastData)
+            cell.configureTableViewCell(with: forecastData)
             return cell
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "DailyTableCell", for: indexPath) as! DailyTableViewCell
-        cell.configureDailyCell(with: hourlyForecastData, indexPath.row)
+        cell.configureDailyCell(with: forecastData, indexPath.row)
         return cell
     }
     
@@ -66,16 +62,11 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
 
     
     func updateUI(){
-        temperatureLabel.text = String(format: "%.0f", currentWeatherData.main.temp) + "°"
-        locationLabel.text = currentWeatherData.name
-        temperatureDescriptionLabel.text = currentWeatherData.weather[0].description
-        temperatureHighLabel.text = "H: " + String(format: "%.0f", currentWeatherData.main.tempMax) + "°"
-        temperatureLowLabel.text = "L: " + String(format: "%.0f", currentWeatherData.main.tempMin) + "°"
+        temperatureLabel.text = String(format: "%.0f", forecastData.current.temp) + "°"
+        //locationLabel.text = currentWeatherData.name
+        temperatureDescriptionLabel.text = forecastData.current.weather[0].description
+        temperatureHighLabel.text = "H: " + String(format: "%.0f", forecastData.daily[0].temp.tempMax) + "°"
+        temperatureLowLabel.text = "L: " + String(format: "%.0f", forecastData.daily[0].temp.tempMin) + "°"
     }
-    
-
-
-    
-     
     
 }

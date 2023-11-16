@@ -42,8 +42,7 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! WeatherDetailViewController
-        destinationVC.currentWeatherData = GetLocationViewController.weatherList.last
-        destinationVC.hourlyForecastData = GetLocationViewController.hourlyForecastList.last
+        destinationVC.forecastData = GetLocationViewController.weatherList.last
     }
     
 }
@@ -58,10 +57,8 @@ extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelega
       let longitude = place.coordinate.longitude
       Task {
           do {
-              let weatherInfo = try await openWeatherController.fetchCurrentWeather(latitude,longitude)
+              let weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
               GetLocationViewController.weatherList.append(weatherInfo)
-              let hourlyInfo = try await openWeatherController.fetchHourlyForecast(latitude, longitude)
-              GetLocationViewController.hourlyForecastList.append(hourlyInfo)
               performSegue(withIdentifier: "SearchSegue", sender: nil)
           } catch {
               print("Error fetching Weather Data")

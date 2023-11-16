@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct HourlyForecast: Codable {
+struct Forecast: Codable {
     var latitude: Double
     var longitude: Double
     var hour: [Hourly]

@@ -24,32 +24,31 @@ class DailyTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
     }
     
-    
-    func configureDailyCell(with hourlyForecastData: HourlyForecast, _ index: Int){
-        let day = hourlyForecastData.daily[index].dateTime
-        dayLabel.text = convertTimeToDay(timestamp: day, hourlyForecastData: hourlyForecastData)
+    func configureDailyCell(with forecastData: Forecast, _ index: Int){
+        let day = forecastData.daily[index].dateTime
+        dayLabel.text = convertTimeToDay(timestamp: day, forecastData: forecastData)
         Task {
             do {
-                let image = hourlyForecastData.daily[index].dailyWeather[0].icon
+                let image = forecastData.daily[index].dailyWeather[0].icon
                 let weatherimage = try await openWeatherController.fetchImage(icon: image)
                 weatherIcon.image = weatherimage
             } catch {
                 print("Error fetching Image")
             }
         }
-        let temperatureLow = hourlyForecastData.daily[index].temp.tempMin
+        let temperatureLow = forecastData.daily[index].temp.tempMin
         temperatureLowLabel.text = String(format: "%.0f", temperatureLow) + "°"
-        let temperatureHigh = hourlyForecastData.daily[index].temp.tempMax
+        let temperatureHigh = forecastData.daily[index].temp.tempMax
         temperatureHighLabel.text = String(format: "%.0f", temperatureHigh) + "°"
     }
     
-    func convertTimeToDay(timestamp: Int, hourlyForecastData: HourlyForecast) -> String {
+    func convertTimeToDay(timestamp: Int, forecastData: Forecast) -> String {
         let time = Double(timestamp)
         
         let date = Date(timeIntervalSince1970: time)
         
         let dateFormatter = DateFormatter()
-        let offset = hourlyForecastData.timezoneOffset
+        let offset = forecastData.timezoneOffset
         dateFormatter.timeZone = TimeZone(secondsFromGMT: offset)
         dateFormatter.dateFormat = "E"
         let newDate = dateFormatter.string(from: date)

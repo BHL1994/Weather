@@ -11,7 +11,7 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
     
     @IBOutlet var collectionView: UICollectionView!
     
-    var hourlyForecastData: HourlyForecast!
+    var forecastData: Forecast!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -19,10 +19,8 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
         collectionView.delegate = self
     }
     
-    
-    
-    func configureTableViewCell(with hourlyForecastData: HourlyForecast){
-        self.hourlyForecastData = hourlyForecastData
+    func configureTableViewCell(with forecastData: Forecast){
+        self.forecastData = forecastData
         collectionView.reloadData()
     }
 
@@ -36,7 +34,7 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourlyCollectionCell", for: indexPath) as! HourlyCollectionViewCell
-        cell.configureCollectionViewCell(with: hourlyForecastData, indexPath.row)
+        cell.configureCollectionViewCell(with: forecastData, indexPath.row)
         
         return cell
     }

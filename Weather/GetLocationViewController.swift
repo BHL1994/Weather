@@ -11,15 +11,11 @@ import CoreLocation
 class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UISearchControllerDelegate {
 
     var currentWeatherData: CurrentWeather?
-    var hourlyForecastData: HourlyForecast?
+    var forecastData: Forecast?
     let openWeatherController = OpenWeatherController()
-    static var weatherList: [CurrentWeather] = [CurrentWeather]()
-    static var hourlyForecastList: [HourlyForecast] = [HourlyForecast]()
+    static var weatherList: [Forecast] = [Forecast]()
     
-    
-    
-    var userCurrentLocation: CurrentWeather?
-    var userHourlyLocation: HourlyForecast?
+    var userLocation: Forecast?
     
     @IBOutlet var authorizeLocationButton: UIButton!
     @IBOutlet var allowAccessLabel: UILabel!
@@ -46,7 +42,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        if userCurrentLocation == nil && userHourlyLocation == nil {
+        if userLocation == nil {
             tableViewSetup()
             tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
         }
@@ -108,15 +104,10 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             }
             Task {
                 do {
-                    let weatherInfo = try await openWeatherController.fetchCurrentWeather(latitude,longitude)
-                    userCurrentLocation = weatherInfo
-                    if let currentLocation = userCurrentLocation {
-                        GetLocationViewController.weatherList.insert(currentLocation, at: 0)
-                    }
-                    let hourlyInfo = try await openWeatherController.fetchHourlyForecast(latitude, longitude)
-                    userHourlyLocation = hourlyInfo
-                    if let hourlyLocation = userHourlyLocation{
-                        GetLocationViewController.hourlyForecastList.insert(hourlyLocation, at: 0)
+                    let weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
+                    userLocation = weatherInfo
+                    if let location = userLocation{
+                        GetLocationViewController.weatherList.insert(location, at: 0)
                     }
                     performSegue(withIdentifier: "PermissionSegue", sender: nil)
                     locationManager?.stopUpdatingLocation()
@@ -145,13 +136,11 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! WeatherDetailViewController
         if segue.identifier == "PermissionSegue"{
-            destinationVC.currentWeatherData = GetLocationViewController.weatherList.last
-            destinationVC.hourlyForecastData = GetLocationViewController.hourlyForecastList.last
+            destinationVC.forecastData = GetLocationViewController.weatherList[0]
         }
         else{
             let section = (sender as! IndexPath).section
-            destinationVC.currentWeatherData = GetLocationViewController.weatherList[section]
-            destinationVC.hourlyForecastData = GetLocationViewController.hourlyForecastList[section]
+            destinationVC.forecastData = GetLocationViewController.weatherList[section]
         }
         hideActivityIndicator()
     }
@@ -184,7 +173,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if userCurrentLocation != nil && userHourlyLocation != nil && indexPath.section == 0 {
+        if userLocation != nil && indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as! WeatherTableViewCell
             cell.layer.cornerRadius = 20
             
