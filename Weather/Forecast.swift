@@ -14,6 +14,8 @@ struct Forecast: Codable {
     var daily: [Daily]
     var timezoneOffset: Int
     var current: Current
+    var name: String!
+    var userLocation: Bool = false
     
     enum CodingKeys: String, CodingKey {
         case latitude = "lat"
@@ -22,6 +24,43 @@ struct Forecast: Codable {
         case daily
         case timezoneOffset = "timezone_offset"
         case current
+        case name
+    }
+    
+    static var archiveURL: URL {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let archiveURL = documentsDirectory.appendingPathComponent("forecasts").appendingPathExtension("plist")
+        
+        return archiveURL
+    }
+    
+    static func saveForecasts(forecast: [Forecast]){
+        let encoder = PropertyListEncoder()
+        
+        do{
+            let encodedForecast = try encoder.encode(forecast)
+            try encodedForecast.write(to: Forecast.archiveURL)
+        } catch {
+            print("Error saving forecasts")
+        }
+
+    }
+    
+    static func loadForecasts() -> [Forecast]? {
+        guard let forecastData = try? Data(contentsOf: Forecast.archiveURL) else {
+            return nil
+        }
+        
+        do {
+            let decoder = PropertyListDecoder()
+            let decodedForecast = try decoder.decode([Forecast].self, from: forecastData)
+            
+            return decodedForecast
+        } catch {
+            print("Error loading forecasts")
+            return nil
+        }
+
     }
 }
 
@@ -56,7 +95,7 @@ struct Current: Codable {
     var temp: Double
     var feelsLike: Double
     var humidity: Int
-    var weather: [CurrWeather]
+    var weather: [Weather]
     
     enum CodingKeys: String, CodingKey {
         case dateTime = "dt"
@@ -69,9 +108,7 @@ struct Current: Codable {
     }
 }
 
-
-//******************
-struct CurrWeather: Codable {
+struct Weather: Codable {
     var id: Int
     var main: String
     var description: String
@@ -110,3 +147,6 @@ struct WeatherIcon: Codable {
         case icon
     }
 }
+
+
+

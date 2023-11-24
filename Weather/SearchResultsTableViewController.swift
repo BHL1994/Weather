@@ -14,15 +14,27 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
     
     let openWeatherController = OpenWeatherController()
     let getLocationViewController = GetLocationViewController()
-    
+    var placemark: CLPlacemark?
+    let filter = GMSAutocompleteFilter()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableDataSource = GMSAutocompleteTableDataSource()
-        tableDataSource.delegate = self
-        
+        setupTableDataSource()
         tableView.delegate = tableDataSource
         tableView.dataSource = tableDataSource
+    }
+    
+    func setupTableDataSource() {
+        tableDataSource = GMSAutocompleteTableDataSource()
+        tableDataSource.delegate = self
         tableDataSource.tableCellBackgroundColor = .black
+        filter.type = .geocode
+        tableDataSource.autocompleteFilter = filter
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        tableDataSource.sourceTextHasChanged(searchController.searchBar.text)
+        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -34,17 +46,26 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         return cell
     }
     
-    func updateSearchResults(for searchController: UISearchController) {
-        tableDataSource.sourceTextHasChanged(searchController.searchBar.text)
-        tableView.reloadData()
-    }
-
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! WeatherDetailViewController
         destinationVC.forecastData = GetLocationViewController.weatherList.last
     }
     
+    func getName(place: GMSPlace) -> String {
+        let city = place.addressComponents?.first(where: {$0.type == "administrative_area_level_1" })?.name
+        let subLocality = place.addressComponents?.first(where: {$0.type == "sublocality_level_1" })?.name
+        let country = place.addressComponents?.first(where: {$0.type == "country" })?.name
+
+        if subLocality != place.name && subLocality != nil {
+            return place.name! + ",\n \(subLocality!) "
+        }
+        
+        if city != place.name && city != nil {
+            return place.name! + ",\n \(city!) "
+        }
+        
+        return place.name!
+    }
 }
 
 extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelegate {
@@ -57,7 +78,9 @@ extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelega
       let longitude = place.coordinate.longitude
       Task {
           do {
-              let weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
+              var weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
+              weatherInfo.name = place.name
+              weatherInfo.userLocation = false
               GetLocationViewController.weatherList.append(weatherInfo)
               performSegue(withIdentifier: "SearchSegue", sender: nil)
           } catch {
@@ -65,6 +88,8 @@ extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelega
           }
       }
   }
+
+    
 
   func tableDataSource(_ tableDataSource: GMSAutocompleteTableDataSource, didFailAutocompleteWithError error: Error) {
     print("Error: \(error.localizedDescription)")

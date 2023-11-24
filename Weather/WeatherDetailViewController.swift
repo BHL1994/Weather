@@ -63,7 +63,7 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
     
     func updateUI(){
         temperatureLabel.text = String(format: "%.0f", forecastData.current.temp) + "°"
-        //locationLabel.text = currentWeatherData.name
+        locationLabel.text = forecastData.name
         temperatureDescriptionLabel.text = forecastData.current.weather[0].description
         temperatureHighLabel.text = "H: " + String(format: "%.0f", forecastData.daily[0].temp.tempMax) + "°"
         temperatureLowLabel.text = "L: " + String(format: "%.0f", forecastData.daily[0].temp.tempMin) + "°"

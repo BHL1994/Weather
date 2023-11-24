@@ -16,7 +16,7 @@ class WeatherTableViewCell: UITableViewCell {
     @IBOutlet weak var cellHighLabel: UILabel!
     
     func weatherCellUpdate(weather: Forecast) {
-        //cellNameLabel.text = weather.name
+        cellNameLabel.text = weather.name
         cellWeatherLabel.text = String(format: "%.0f", weather.current.temp) + "°"
         cellLowLabel.text = "L: " + String(format: "%.0f", weather.daily[0].temp.tempMin) + "°"
         cellHighLabel.text = "H: " + String(format: "%.0f", weather.daily[0].temp.tempMax) + "°"

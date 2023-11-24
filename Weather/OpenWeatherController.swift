@@ -17,7 +17,7 @@ class OpenWeatherController {
     
     let baseURL = URL(string: "https://api.openweathermap.org/data/2.5")!
     
-//    func fetchCurrentWeather(_ latitude: Double, _ longitude: Double) async throws -> CurrentWeather {
+//    func fetchWeatherName(_ latitude: Double, _ longitude: Double) async throws -> CurrentWeather {
 //        
 //        let currentWeatherURL = baseURL.appendingPathComponent("weather")
 //        
