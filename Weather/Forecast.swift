@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Forecast: Codable {
     var latitude: Double
@@ -15,7 +16,7 @@ struct Forecast: Codable {
     var timezoneOffset: Int
     var current: Current
     var name: String!
-    var userLocation: Bool = false
+    var userLocation: CLLocation?
     
     enum CodingKeys: String, CodingKey {
         case latitude = "lat"

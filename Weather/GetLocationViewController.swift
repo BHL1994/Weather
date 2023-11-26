@@ -13,6 +13,8 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     var forecastData: Forecast?
     let openWeatherController = OpenWeatherController()
     
+    var userLocation: Bool = false
+    
     static var weatherList: [Forecast] = [Forecast]() {
         didSet {
             Forecast.saveForecasts(forecast: weatherList)
@@ -46,29 +48,63 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         loadingView.isHidden = true
         searchResultsSetup()
         tableViewSetup()
-        layoutSetup()
+        adjustView()
         if let forecasts = Forecast.loadForecasts() {
             GetLocationViewController.weatherList = forecasts
-            print(GetLocationViewController.weatherList[0].userLocation)
         }
+//        let notificationCenter = NotificationCenter.default
+//        notificationCenter.addObserver(self, selector: #selector(appIsActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
-    func layoutSetup(){
-        if GetLocationViewController.weatherList.count > 0 && GetLocationViewController.weatherList[0].userLocation == true {
-            //authorizeLocationButton.isHidden = true
-            //allowAccessLabel.isHidden = true
-            tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = false
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-            print("Allow access button is hidden")
-            //print(allowAccessLabel.constraints.description)
-        } else {
-            //authorizeLocationButton.isHidden = false
-            //allowAccessLabel.isHidden = false
-            tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 10).isActive = true
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = false
-            print("Allow access button is shown")
-            //print(allowAccessLabel.constraints.description)
+//    @objc func appIsActive(){
+//        print("active")
+//    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        //NotificationCenter.default.removeObserver(self)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("view")
+    }
+    
+
+    
+    func checkPermissions () {
+        if(GetLocationViewController.weatherList.count >= 1){
+            if let location = GetLocationViewController.weatherList[0].userLocation {
+                userLocation = true
+                print(location)
+            }
         }
+    }
+
+    func adjustView(){
+        checkPermissions()
+        if userLocation == true {
+            //button is hidden
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5).isActive = true
+            authorizeLocationButton.isHidden = true
+            allowAccessLabel.isHidden = true
+            print("hidden")
+            } else {
+                //button is showing
+                authorizeLocationButton.isHidden = false
+                allowAccessLabel.isHidden = false
+                tableView.topAnchor.constraint(equalTo: authorizeLocationButton.bottomAnchor, constant: 15).isActive = true
+                print("not hidden")
+            }
+            tableView.reloadData()
+    }
+    
+    func tableViewSetup() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.backgroundColor = .darkGray
+        let trailing = view.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: tableView.trailingAnchor, constant: 10)
+        let leading = tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10)
+        let bottom = view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 0)
+        view.addConstraints([trailing, leading, bottom])
         tableView.reloadData()
     }
     
@@ -85,13 +121,6 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         self.searchController = searchController
     }
     
-    func tableViewSetup() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.backgroundColor = .darkGray
-        tableView.reloadData()
-    }
-    
     func getName(latitude: Double, longitude: Double){
         let location = CLLocation(latitude: latitude, longitude: longitude)
 
@@ -100,11 +129,9 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
             if let error = error{
                 print(error)
-            } 
-        
+            }
             if let placemark = placemarks?.first {
                 self.placemark = placemark
-                print(self.placemark?.locality)
             }
         }
     }
@@ -137,11 +164,11 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
             }
             Task {
                 do {
-                    var weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
-                    getName(latitude: latitude, longitude: longitude)
-                    weatherInfo.name = "My Location"
-                    weatherInfo.userLocation = true
+                    let weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
                     GetLocationViewController.weatherList.insert(weatherInfo, at: 0)
+                    GetLocationViewController.weatherList[0].name = "My Location"
+                    GetLocationViewController.weatherList[0].userLocation = locationManager?.location
+                    userLocation = true
                     performSegue(withIdentifier: "PermissionSegue", sender: nil)
                     locationManager?.stopUpdatingLocation()
                 } catch {
@@ -163,7 +190,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     
     @IBAction func unwindToGetLocationViewController(unwindSegue: UIStoryboardSegue) {
         searchController.isActive = false
-        layoutSetup()
+        viewDidLoad()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -202,20 +229,36 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+        if editingStyle == .delete && userLocation == true && indexPath.section == 0 {
+            userLocation = false
+            locationManager = nil
             GetLocationViewController.weatherList.remove(at: indexPath.section)
             let indexSet = IndexSet(arrayLiteral: indexPath.section)
             tableView.deleteSections(indexSet, with: .fade)
-            layoutSetup()
+            adjustView()
+        }
+        else {
+            GetLocationViewController.weatherList.remove(at: indexPath.section)
+            let indexSet = IndexSet(arrayLiteral: indexPath.section)
+            tableView.deleteSections(indexSet, with: .fade)
+            adjustView()
         }
     }
+    
+//    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+//        if indexPath.section == 0 && accessGranted() {
+//            return false;
+//        }
+//        
+//        return true;
+//    }
    
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         return .delete
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 && GetLocationViewController.weatherList[indexPath.section].userLocation == true {
+        if indexPath.section == 0 && userLocation == true {
             let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as! WeatherTableViewCell
             cell.layer.cornerRadius = 20
             

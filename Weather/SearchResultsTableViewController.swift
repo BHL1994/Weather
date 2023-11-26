@@ -78,10 +78,10 @@ extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelega
       let longitude = place.coordinate.longitude
       Task {
           do {
-              var weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
-              weatherInfo.name = place.name
-              weatherInfo.userLocation = false
+              let weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
               GetLocationViewController.weatherList.append(weatherInfo)
+              let count = GetLocationViewController.weatherList.count
+              GetLocationViewController.weatherList[count-1].name = place.name
               performSegue(withIdentifier: "SearchSegue", sender: nil)
           } catch {
               print("Error fetching Weather Data")
