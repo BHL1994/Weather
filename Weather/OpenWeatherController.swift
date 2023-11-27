@@ -49,7 +49,6 @@ class OpenWeatherController {
               httpResponse.statusCode == 200 else {
             throw WeatherError.weatherNotFound
               }
-        print(components.url)
         let jsonDecoder = JSONDecoder()
         let weatherInfo = try jsonDecoder.decode(Forecast.self, from: data)
         return (weatherInfo)
