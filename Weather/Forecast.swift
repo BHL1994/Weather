@@ -11,7 +11,7 @@ import CoreLocation
 struct Forecast: Codable {
     var latitude: Double
     var longitude: Double
-    var hour: [Hourly]
+    var hourly: [Hourly]
     var daily: [Daily]
     var timezoneOffset: Int
     var current: Current
@@ -21,7 +21,7 @@ struct Forecast: Codable {
     enum CodingKeys: String, CodingKey {
         case latitude = "lat"
         case longitude = "lon"
-        case hour = "hourly"
+        case hourly
         case daily
         case timezoneOffset = "timezone_offset"
         case current

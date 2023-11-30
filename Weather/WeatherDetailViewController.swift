@@ -20,11 +20,34 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
     
     @IBOutlet var tableView: UITableView!
     
+    let openWeatherController = OpenWeatherController()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        //getWeatherData()
         updateUI()
+    }
+    
+//    func getWeatherData(){
+//        Task {
+//            do {
+//                let weatherInfo = try await openWeatherController.fetchForecast(forecastData.latitude, forecastData.longitude)
+//                forecastData = weatherInfo
+//            } catch {
+//                print("Error fetching Weather Data")
+//            }
+//        }
+//    }
+    
+    //Updates the data on the weather detail page
+    func updateUI(){
+        temperatureLabel.text = String(format: "%.0f", forecastData.current.temp) + "°"
+        locationLabel.text = forecastData.name
+        temperatureDescriptionLabel.text = forecastData.current.weather[0].description
+        temperatureHighLabel.text = "H: " + String(format: "%.0f", forecastData.daily[0].temp.tempMax) + "°"
+        temperatureLowLabel.text = "L: " + String(format: "%.0f", forecastData.daily[0].temp.tempMin) + "°"
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -59,14 +82,14 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         }
         return nil
     }
-
     
-    func updateUI(){
-        temperatureLabel.text = String(format: "%.0f", forecastData.current.temp) + "°"
-        locationLabel.text = forecastData.name
-        temperatureDescriptionLabel.text = forecastData.current.weather[0].description
-        temperatureHighLabel.text = "H: " + String(format: "%.0f", forecastData.daily[0].temp.tempMax) + "°"
-        temperatureLowLabel.text = "L: " + String(format: "%.0f", forecastData.daily[0].temp.tempMin) + "°"
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 1 {
+            return 80
+        }
+        return 170
     }
+
+
     
 }

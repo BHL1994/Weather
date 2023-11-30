@@ -17,18 +17,18 @@ class HourlyCollectionViewCell: UICollectionViewCell {
 
     
     func configureCollectionViewCell(with forecastData: Forecast, _ index: Int){
-        let time = forecastData.hour[index+1].dateTime
+        let time = forecastData.hourly[index].dateTime
         timeLabel.text = convertTime(timestamp: time, forecastData: forecastData)
         Task{
             do {
-                let image = forecastData.hour[index+1].weather[0].icon
+                let image = forecastData.hourly[index].weather[0].icon
                 let weatherImage = try await openWeatherController.fetchImage(icon: image)
                 iconLabel.image = weatherImage
             } catch {
                 print("Error fetching Image")
             }
         }
-        let temperature = forecastData.hour[index].temp
+        let temperature = forecastData.hourly[index].temp
         temperatureLabel.text = String(format: "%.0f", temperature) + "°"
     }
     

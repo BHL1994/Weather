@@ -10,84 +10,46 @@ import CoreLocation
 
 class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UISearchControllerDelegate {
 
-    var forecastData: Forecast?
-    let openWeatherController = OpenWeatherController()
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var loadingView: UIView!
     
-    var userLocation: Bool = false
+    @IBOutlet weak var tableView: UITableView!
+        
+    var locationManager: CLLocationManager?
+    var placemark: CLPlacemark?
+
+    let geocoder = CLGeocoder()
+    var searchResultsTableViewController: SearchResultsTableViewController?
+    var searchController = UISearchController()
+    
+    let openWeatherController = OpenWeatherController()
     
     static var weatherList: [Forecast] = [Forecast]() {
         didSet {
             Forecast.saveForecasts(forecast: weatherList)
         }
     }
-        
-    @IBOutlet var authorizeLocationButton: UIButton!
-    @IBOutlet var allowAccessLabel: UILabel!
-
-    var placemark: CLPlacemark?
-    
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var loadingView: UIView!
-    
-    @IBOutlet weak var tableView: UITableView!
-    
-    var latitude: Double = 0
-    var longitude: Double = 0
-    
-    var locationManager: CLLocationManager?
-    
-    let geocoder = CLGeocoder()
-    
-    var searchResultsTableViewController: SearchResultsTableViewController?
-    var searchController = UISearchController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Location"
-        loadingView.isHidden = true
         searchResultsSetup()
         tableViewSetup()
         if let forecasts = Forecast.loadForecasts() {
             GetLocationViewController.weatherList = forecasts
         }
+        updateCells()
         getLocation()
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(appIsActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
         updateCells()
+        Forecast.saveForecasts(forecast: GetLocationViewController.weatherList)
     }
     
-    @objc func appIsActive(){
-        getLocation()
-    }
-    
-    func getLocation(){
-        locationManager = CLLocationManager()
-        switch locationManager?.authorizationStatus {
-        case .notDetermined:
-            locationManager?.delegate = self
-        case .authorizedWhenInUse:
-            if GetLocationViewController.weatherList.first?.name == "My Location" {
-                break
-            }
-            else {
-                locationManager?.delegate = self
-            }
-        case .authorizedAlways:
-            if GetLocationViewController.weatherList.first?.name == "My Location" {
-                break
-            }
-            else {
-                locationManager?.delegate = self
-            }
-        case .denied:
-            if GetLocationViewController.weatherList.first?.name == "My Location" {
-                GetLocationViewController.weatherList.remove(at: 0)
-            }
-        default:
-            break
-        }
-    }
-    
+    //Sets up table view
     func tableViewSetup() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -109,18 +71,41 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         self.searchController = searchController
     }
     
-    func getName(latitude: Double, longitude: Double){
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-
-        let geocoder = CLGeocoder()
-
-        geocoder.reverseGeocodeLocation(location) { (placemarks, error) in
-            if let error = error{
-                print(error)
+    @objc func appIsActive(){
+        getLocation()
+    }
+    
+    //Checks for location once app is opened and decides whether permission is granted.
+    func getLocation(){
+        locationManager = CLLocationManager()
+        switch locationManager?.authorizationStatus {
+        case .notDetermined:
+            locationManager?.delegate = self
+        case .authorizedWhenInUse:
+            //If access is granted and a cell with the user's location is already there then do nothing, otherwise add a new cell
+            if GetLocationViewController.weatherList.first?.name == "My Location" {
+                break
             }
-            if let placemark = placemarks?.first {
-                self.placemark = placemark
+            else {
+                showActivityIndicator()
+                locationManager?.delegate = self
             }
+        case .authorizedAlways:
+            //If access is granted and a cell with the user's location is already there then do nothing, otherwise add a new cell
+            if GetLocationViewController.weatherList.first?.name == "My Location" {
+                break
+            }
+            else {
+                showActivityIndicator()
+                locationManager?.delegate = self
+            }
+        case .denied:
+            //if access is denied and the user has a cell with their location then delete that cell
+            if GetLocationViewController.weatherList.first?.name == "My Location" {
+                GetLocationViewController.weatherList.remove(at: 0)
+            }
+        default:
+            break
         }
     }
     
@@ -132,6 +117,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
 
     }
     
+    //If permission is granted to share location, app will then get the coordinates of the user's location and add it to the weather list and also push to the weather detail page
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch locationManager?.authorizationStatus {
         case .notDetermined:
@@ -141,9 +127,10 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         case .restricted:
             break
         case .authorizedAlways, .authorizedWhenInUse, .authorized:
-            showActivityIndicator()
             locationManager?.requestLocation()
             sleep(2)
+            var latitude: Double = 0
+            var longitude: Double = 0
             if let location = locationManager?.location?.coordinate.latitude {
                 latitude = location
             }
@@ -168,21 +155,19 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         default:
             break
         }
-        authorizeLocationButton.isEnabled = true
     }
     
+    //This function updates the time and temperature of all the cells, this will be called whenever the GetLocationViewController is loaded
     func updateCells(){
         for (index) in GetLocationViewController.weatherList.indices {
+            let name = GetLocationViewController.weatherList[index].name
             let latitude = GetLocationViewController.weatherList[index].latitude
             let longitude = GetLocationViewController.weatherList[index].longitude
             Task {
                 do {
                     let weatherInfo = try await openWeatherController.fetchForecast(latitude, longitude)
-                    GetLocationViewController.weatherList[index].current.dateTime = weatherInfo.current.dateTime
-                    GetLocationViewController.weatherList[index].current.temp = weatherInfo.current.temp
-                    GetLocationViewController.weatherList[index].daily[0].temp.tempMax = weatherInfo.daily[0].temp.tempMax
-                    GetLocationViewController.weatherList[index].daily[0].temp.tempMin = weatherInfo.daily[0].temp.tempMin
-                    GetLocationViewController.weatherList[index].current.dateTime = weatherInfo.current.dateTime
+                    GetLocationViewController.weatherList[index] = weatherInfo
+                    GetLocationViewController.weatherList[index].name = name
                 } catch {
                     print("Error fetching Weather Data")
                 }
@@ -190,9 +175,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         }
     }
     
-    @IBAction func buttonTapped(_ sender: Any) {
-    }
-    
+    //Unwinds back to the GetLoctionViewController from the weather detail page
     @IBAction func unwindToGetLocationViewController(unwindSegue: UIStoryboardSegue) {
         searchController.isActive = false
         viewDidLoad()
@@ -233,9 +216,9 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         performSegue(withIdentifier: "CellSegue", sender: indexPath)
     }
     
+    //If the user's location is given then that cell is not able to be manually deleted
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete && indexPath.section == 0 && GetLocationViewController.weatherList.first?.name == "My Location" {
-            userLocation = false
             locationManager = nil
             GetLocationViewController.weatherList.remove(at: indexPath.section)
             let indexSet = IndexSet(arrayLiteral: indexPath.section)
@@ -280,12 +263,14 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         return cell
     }
     
+    //When access is given the activity indicator will appear on screen to signify loading
     func showActivityIndicator(){
         activityIndicator.startAnimating()
         loadingView.isHidden = false
         loadingView.backgroundColor = UIColor.darkGray.withAlphaComponent(0.5)
     }
     
+    //Removed the activity indicator from the screen after loading
     func hideActivityIndicator(){
         activityIndicator.stopAnimating()
         loadingView.isHidden = true
