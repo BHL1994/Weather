@@ -7,14 +7,18 @@
 
 import UIKit
 
-class HourlyCollectionViewCell: UICollectionViewCell {
+class HourlyCollectionViewCell: UICollectionViewCell, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var timeLabel: UILabel!
-    @IBOutlet weak var iconLabel: UIImageView!
+    @IBOutlet weak var iconImage: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     
     let openWeatherController = OpenWeatherController()
-
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.iconImage.image = nil
+    }
     
     func configureCollectionViewCell(with forecastData: Forecast, _ index: Int){
         let time = forecastData.hourly[index].dateTime
@@ -23,7 +27,7 @@ class HourlyCollectionViewCell: UICollectionViewCell {
             do {
                 let image = forecastData.hourly[index].weather[0].icon
                 let weatherImage = try await openWeatherController.fetchImage(icon: image)
-                iconLabel.image = weatherImage
+                iconImage.image = weatherImage
             } catch {
                 print("Error fetching Image")
             }

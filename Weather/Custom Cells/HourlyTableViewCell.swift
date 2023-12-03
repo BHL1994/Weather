@@ -39,4 +39,5 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
         return cell
     }
     
+    
 }

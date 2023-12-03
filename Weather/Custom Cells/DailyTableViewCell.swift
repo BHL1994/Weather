@@ -25,8 +25,12 @@ class DailyTableViewCell: UITableViewCell {
     }
     
     func configureDailyCell(with forecastData: Forecast, _ index: Int){
-        let day = forecastData.daily[index].dateTime
-        dayLabel.text = convertTimeToDay(timestamp: day, forecastData: forecastData)
+        if index == 0 {
+            dayLabel.text = "Today"
+        } else {
+            let day = forecastData.daily[index].dateTime
+            dayLabel.text = convertTimeToDay(timestamp: day, forecastData: forecastData)
+        }
         Task {
             do {
                 let image = forecastData.daily[index].dailyWeather[0].icon
@@ -37,9 +41,9 @@ class DailyTableViewCell: UITableViewCell {
             }
         }
         let temperatureLow = forecastData.daily[index].temp.tempMin
-        temperatureLowLabel.text = String(format: "%.0f", temperatureLow) + "°"
+        temperatureLowLabel.text = "L: " + String(format: "%.0f", temperatureLow) + "°"
         let temperatureHigh = forecastData.daily[index].temp.tempMax
-        temperatureHighLabel.text = String(format: "%.0f", temperatureHigh) + "°"
+        temperatureHighLabel.text = "H: " + String(format: "%.0f", temperatureHigh) + "°"
     }
     
     func convertTimeToDay(timestamp: Int, forecastData: Forecast) -> String {

@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreLocation
+import QuartzCore
 
 class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
@@ -29,17 +30,6 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         //getWeatherData()
         updateUI()
     }
-    
-//    func getWeatherData(){
-//        Task {
-//            do {
-//                let weatherInfo = try await openWeatherController.fetchForecast(forecastData.latitude, forecastData.longitude)
-//                forecastData = weatherInfo
-//            } catch {
-//                print("Error fetching Weather Data")
-//            }
-//        }
-//    }
     
     //Updates the data on the weather detail page
     func updateUI(){
@@ -85,11 +75,17 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 1 {
-            return 80
+            return 65
         }
-        return 170
+        return 150
     }
 
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 50
+        }
+        return 10
+    }
 
     
 }
