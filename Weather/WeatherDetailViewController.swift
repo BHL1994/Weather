@@ -27,7 +27,12 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        //getWeatherData()
+
+        tableView.layer.shadowColor = UIColor.black.withAlphaComponent(0.4).cgColor
+        tableView.layer.shadowOpacity = 1
+        tableView.layer.shadowRadius = 5
+        tableView.layer.shadowOffset = .init(width: 0, height: 5)
+
         updateUI()
     }
     
@@ -68,24 +73,24 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
             return "Hourly Forecast"
         }
         else if section == 1{
-            return "7-Day Forecast"
+            return "8-Day Forecast"
         }
         return nil
     }
+
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 1 {
-            return 65
+            return 50
         }
         return 150
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
-            return 50
+            return 60
         }
         return 10
     }
-
-    
+        
 }

@@ -58,5 +58,6 @@ class DailyTableViewCell: UITableViewCell {
         let newDate = dateFormatter.string(from: date)
         return newDate
     }
+    
 
 }

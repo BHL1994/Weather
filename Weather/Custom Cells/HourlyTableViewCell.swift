@@ -17,6 +17,8 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
         super.awakeFromNib()
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.backgroundColor = .white
+        
     }
     
     func configureTableViewCell(with forecastData: Forecast){

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A085A892B2526F800231F9B /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A085A872B2526F800231F9B /* Montserrat-Bold.ttf */; };
+		1A085A8A2B2526F800231F9B /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A085A882B2526F800231F9B /* Montserrat-Regular.ttf */; };
 		1A0D1B222AAEB9F90088527F /* WeatherTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D1B212AAEB9F90088527F /* WeatherTableViewCell.swift */; };
 		1A27CF942A147B920017354B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A27CF932A147B920017354B /* AppDelegate.swift */; };
 		1A27CF962A147B920017354B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A27CF952A147B920017354B /* SceneDelegate.swift */; };
@@ -50,6 +52,8 @@
 /* Begin PBXFileReference section */
 		0765BEF080A40CB77485D2F7 /* Pods_Weather_WeatherUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Weather_WeatherUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		12F35599D70C882F421B20CD /* Pods-WeatherTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeatherTests.release.xcconfig"; path = "Target Support Files/Pods-WeatherTests/Pods-WeatherTests.release.xcconfig"; sourceTree = "<group>"; };
+		1A085A872B2526F800231F9B /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Bold.ttf"; path = "../../../../../Downloads/montserrat/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
+		1A085A882B2526F800231F9B /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-Regular.ttf"; path = "../../../../../Downloads/montserrat/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		1A0D1B212AAEB9F90088527F /* WeatherTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTableViewCell.swift; sourceTree = "<group>"; };
 		1A27CF902A147B920017354B /* Weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A27CF932A147B920017354B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -144,6 +148,8 @@
 				1A6047A92ACBAB0900BDDAAF /* SearchResultsTableViewController.swift */,
 				1AAB6DC12AF82A5E00D4812F /* Custom Cells */,
 				1A27CF992A147B920017354B /* Main.storyboard */,
+				1A085A872B2526F800231F9B /* Montserrat-Bold.ttf */,
+				1A085A882B2526F800231F9B /* Montserrat-Regular.ttf */,
 				1A27CF9C2A147B940017354B /* Assets.xcassets */,
 				1A27CF9E2A147B940017354B /* LaunchScreen.storyboard */,
 				1A27CFA12A147B940017354B /* Info.plist */,
@@ -311,8 +317,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A085A892B2526F800231F9B /* Montserrat-Bold.ttf in Resources */,
 				1A27CFA02A147B940017354B /* LaunchScreen.storyboard in Resources */,
 				1A27CF9D2A147B940017354B /* Assets.xcassets in Resources */,
+				1A085A8A2B2526F800231F9B /* Montserrat-Regular.ttf in Resources */,
 				1A27CF9B2A147B920017354B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
