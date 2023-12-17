@@ -68,15 +68,15 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         return cell
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 0{
-            return "Hourly Forecast"
-        }
-        else if section == 1{
-            return "8-Day Forecast"
-        }
-        return nil
-    }
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        if section == 0 {
+//            return "Hourly Forecast"
+//        }
+//        else if section == 1 {
+//            return "8-Day Forecast"
+//        }
+//        return nil
+//    }
 
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
