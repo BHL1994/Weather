@@ -24,6 +24,7 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
     func configureTableViewCell(with forecastData: Forecast){
         self.forecastData = forecastData
         collectionView.reloadData()
+        collectionView.backgroundColor = .clear
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -34,10 +35,11 @@ class HourlyTableViewCell: UITableViewCell, UICollectionViewDelegate, UICollecti
         return 24
     }
     
+    
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourlyCollectionCell", for: indexPath) as! HourlyCollectionViewCell
         cell.configureCollectionViewCell(with: forecastData, indexPath.row)
-        
         return cell
     }
     

@@ -13,7 +13,7 @@ class DailyTableViewCell: UITableViewCell {
     @IBOutlet weak var weatherIcon: UIImageView!
     @IBOutlet weak var temperatureLowLabel: UILabel!
     @IBOutlet weak var temperatureHighLabel: UILabel!
-    
+    @IBOutlet weak var headerLabel: UILabel!
     let openWeatherController = OpenWeatherController()
     
     override func awakeFromNib() {
