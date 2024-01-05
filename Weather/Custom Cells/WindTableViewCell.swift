@@ -20,7 +20,7 @@ class WindTableViewCell: UITableViewCell {
         }else {
             gustLabel.text = "0 MPH Wind Gusts"
         }
-        directionLabel.text = degreeToDirection(degrees: weather.current.windDeg)
+        directionLabel.text = "Wind is heading " + degreeToDirection(degrees: weather.current.windDeg) + "."
     }
     
     //Converts the wind degree to a direction on compass
@@ -31,15 +31,13 @@ class WindTableViewCell: UITableViewCell {
         
         return directions[index]
     }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

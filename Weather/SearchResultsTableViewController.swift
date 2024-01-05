@@ -50,22 +50,6 @@ class SearchResultsTableViewController: UITableViewController, UISearchResultsUp
         let destinationVC = segue.destination as! WeatherDetailViewController
         destinationVC.forecastData = GetLocationViewController.weatherList.last
     }
-    
-    func getName(place: GMSPlace) -> String {
-        let city = place.addressComponents?.first(where: {$0.type == "administrative_area_level_1" })?.name
-        let subLocality = place.addressComponents?.first(where: {$0.type == "sublocality_level_1" })?.name
-        let country = place.addressComponents?.first(where: {$0.type == "country" })?.name
-
-        if subLocality != place.name && subLocality != nil {
-            return place.name! + ",\n \(subLocality!) "
-        }
-        
-        if city != place.name && city != nil {
-            return place.name! + ",\n \(city!) "
-        }
-        
-        return place.name!
-    }
 }
 
 extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelegate {
@@ -88,8 +72,6 @@ extension SearchResultsTableViewController: GMSAutocompleteTableDataSourceDelega
           }
       }
   }
-
-    
 
   func tableDataSource(_ tableDataSource: GMSAutocompleteTableDataSource, didFailAutocompleteWithError error: Error) {
     print("Error: \(error.localizedDescription)")

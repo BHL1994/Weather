@@ -25,14 +25,14 @@ class SunriseTableViewCell: UITableViewCell {
             time = weather.daily[1].sunset
             descriptionLabel.text = "Sunset: " + convertTime(timestamp: time, forecastData: weather)
         }
-        //otherwise if it is passed sunrise but still not sunset
+        //otherwise if it is passed sunrise but still not sunset ex. noon
         //show the sunset time for today and sunrise for tomorrow
         else if currentTime > sunrise && currentTime < sunset {
             timeLabel.text = convertTime(timestamp: sunset, forecastData: weather)
             var time = weather.daily[1].sunrise
             descriptionLabel.text = "Sunrise: " + convertTime(timestamp: time, forecastData: weather)
         }
-        //otherwise if sunrise and sunset have not passed yet
+        //otherwise if sunrise and sunset have not passed yet ex. early morning
         //then show the sunrise and sunset for today
         else if currentTime < sunrise && currentTime < sunset {
             timeLabel.text = convertTime(timestamp: sunrise, forecastData: weather)
@@ -55,13 +55,10 @@ class SunriseTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

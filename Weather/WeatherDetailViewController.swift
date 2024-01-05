@@ -10,8 +10,6 @@ import CoreLocation
 import QuartzCore
 
 class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-        
-    var forecastData: Forecast!
     
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -21,8 +19,11 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
     
     @IBOutlet var tableView: UITableView!
     
+    @IBOutlet weak var backgroundImageView: UIImageView!
     
     let openWeatherController = OpenWeatherController()
+    
+    var forecastData: Forecast!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +37,6 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         updateUI(forecast: forecastData)
     }
     
-    
     //Updates the data on the weather detail page
     func updateUI(forecast: Forecast){
         temperatureLabel.text = String(format: "%.0f", forecastData.current.temp) + "°"
@@ -46,17 +46,22 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         temperatureLowLabel.text = "L: " + String(format: "%.0f", forecastData.daily[0].temp.tempMin) + "°"
         switch forecast.current.weather[0].main {
         case "Clear":
-            view.backgroundColor = UIColor(red: 191/255, green: 225/255, blue: 255/255, alpha: 1)
+            if forecast.current.dateTime > forecast.current.sunset {
+                backgroundImageView.image = UIImage(named: "Clear Sky Night")
+            }
+            else {
+                backgroundImageView.image = UIImage(named: "Clear Sky Day")
+            }
         case "Clouds":
-            view.backgroundColor = UIColor(red: 204/255, green: 204/255, blue: 204/255, alpha: 1)
+            backgroundImageView.image = UIImage(named: "Cloudy")
         case "Rain", "Mist":
-            view.backgroundColor = UIColor(red: 26/255, green: 35/255, blue: 126/255, alpha: 1)
+            backgroundImageView.image = UIImage(named: "Rain")
         case "Thunderstorm":
-            view.backgroundColor = UIColor(red: 49/255, green: 27/255, blue: 146/255, alpha: 1)
+            backgroundImageView.image = UIImage(named: "Thunderstorm")
         case "Snow":
-            view.backgroundColor = UIColor(red: 245/255, green: 245/255, blue: 245/255, alpha: 1)
+            backgroundImageView.image = UIImage(named: "Snow")
         default:
-            view.backgroundColor = UIColor(red: 210/255, green: 110/255, blue: 74/255, alpha: 1)
+            backgroundImageView.image = UIImage(named: "sunny2")
         }
     }
     
@@ -70,18 +75,20 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         }
         return 1
     }
-
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 1 {
             return 50
         }
-        else if indexPath.section == 2 {
-            return 135
+        else if indexPath.section == 2 || indexPath.section == 5 {
+            return 125
         }
+        else if indexPath.section == 3 || indexPath.section == 4{
+            return 110
+        }
+        
         return 150
     }
-    
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
@@ -123,16 +130,17 @@ class WeatherDetailViewController: UIViewController, UITableViewDataSource, UITa
         }
         else if indexPath.section == 4 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "VisibilityCell", for: indexPath) as! VisibilityTableViewCell
-            cell.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-            return cell
-        }
-        else if indexPath.section == 5 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "WindCell", for: indexPath) as! WindTableViewCell
             cell.configure(weather: forecastData)
             cell.backgroundColor = UIColor.white.withAlphaComponent(0.1)
             return cell
         }
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HumidityCell", for: indexPath) as! HumidityTableViewCell
+        else if indexPath.section == 5 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "HumidityCell", for: indexPath) as! HumidityTableViewCell
+            cell.configure(weather: forecastData)
+            cell.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            return cell
+        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "WindCell", for: indexPath) as! WindTableViewCell
         cell.configure(weather: forecastData)
         cell.backgroundColor = UIColor.white.withAlphaComponent(0.1)
         return cell

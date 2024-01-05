@@ -9,15 +9,19 @@ import UIKit
 
 class VisibilityTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var visibilityLabel: UILabel!
+    
+    func configure(weather: Forecast){
+        let visibility = weather.current.visibility/1609
+        visibilityLabel.text = "\(visibility) Miles"
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
 
 }

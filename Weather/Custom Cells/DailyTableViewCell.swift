@@ -16,14 +16,6 @@ class DailyTableViewCell: UITableViewCell {
     @IBOutlet weak var headerLabel: UILabel!
     let openWeatherController = OpenWeatherController()
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-    
     func configureDailyCell(with forecastData: Forecast, _ index: Int){
         if index == 0 {
             dayLabel.text = "Today"
@@ -59,5 +51,12 @@ class DailyTableViewCell: UITableViewCell {
         return newDate
     }
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+    }
 
 }

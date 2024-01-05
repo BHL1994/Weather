@@ -11,19 +11,15 @@ class FeelsLikeTableViewCell: UITableViewCell {
 
     @IBOutlet weak var temperatureLabel: UILabel!
     
+    func configure(weather: Forecast){
+        temperatureLabel.text =  String(format: "%.0f", weather.current.feelsLike) + "° F"
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
-    
-    func configure(weather: Forecast){
-        temperatureLabel.text =  String(format: "%.0f", weather.current.feelsLike) + "°"
-    }
-
 }

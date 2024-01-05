@@ -15,6 +15,7 @@ class WeatherTableViewCell: UITableViewCell {
     @IBOutlet weak var cellLowLabel: UILabel!
     @IBOutlet weak var cellHighLabel: UILabel!
     
+    
     func weatherCellUpdate(weather: Forecast) {
         cellNameLabel.text = weather.name
         cellWeatherLabel.text = String(format: "%.0f", weather.current.temp) + "°"
@@ -25,6 +26,8 @@ class WeatherTableViewCell: UITableViewCell {
         cellTimeLabel.text = convertTimeToDay(timestamp: time, forecastData: weather)
     }
     
+    //Converts the time stamp given by the API and converts it to the
+    //area's time
     func convertTimeToDay(timestamp: Int, forecastData: Forecast) -> String {
         let time = Double(timestamp)
         

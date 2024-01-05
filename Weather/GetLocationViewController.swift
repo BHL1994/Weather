@@ -58,6 +58,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         tableView.reloadData()
     }
     
+    //Sets up search bar
     func searchResultsSetup(){
         searchResultsTableViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SearchResultsTableViewController") as? SearchResultsTableViewController
         let searchController = UISearchController(searchResultsController: searchResultsTableViewController)
@@ -181,6 +182,9 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         viewDidLoad()
     }
 
+    //Sets up transition into the Weather Detail View Controller
+    //Can be two ways, from when permission is granted from location manager
+    //Or when a a table view cell is slected
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! WeatherDetailViewController
         if segue.identifier == "PermissionSegue"{
@@ -231,6 +235,7 @@ class GetLocationViewController: UIViewController, CLLocationManagerDelegate, UI
         }
     }
     
+    //disables table view cell with user's location from being deleted
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == 0 && GetLocationViewController.weatherList.first?.name == "My Location" {
             return false;
